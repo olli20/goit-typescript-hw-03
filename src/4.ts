@@ -28,35 +28,30 @@ class Key {
       }
     }
 
-    comeIn(name: string) {
+    comeIn() {
       if (this.isDoorOpen) {
         this.isPersonAtHome = true;
-        console.log(name + " is at home")
       }
     }
   }
 
   class Person {
-    private savedKey: number;
-    protected personsName: string;
-    constructor(key: Key, name: string) {
-      this.savedKey = key.getSignature()
-      this.personsName = name;
+    private key: Key;
+
+    constructor(ownedKey: Key) {
+      this.key = ownedKey;
     }
 
-    getKey(): number {
-      return this.savedKey;
-    }
-    getName(): string {
-      return this.personsName;
+    getKey(this: Person): number {
+      return key.getSignature();
     }
   }
 
   const key = new Key();
   const house = new MyHouse(key);
-  const person = new Person(key, "Max");
-
+  const person = new Person(key);
+  
   house.openDoor(person.getKey());
-  house.comeIn(person.getName());
+  // house.comeIn(person);
 
 export {};
