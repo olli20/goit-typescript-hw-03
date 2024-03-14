@@ -1,57 +1,67 @@
 class Key {
-    private signature: number;
+  private signature: number;
 
-    constructor() {
-      this.signature = Math.floor(Math.random() * 100); //Returns a random integer from 0 to 99
-    }
-  
-    getSignature(this: Key): number {
-      return this.signature;
+  constructor() {
+    this.signature = Math.floor(Math.random() * 100); //Returns a random integer from 0 to 99
+  }
+
+  getSignature(): number {
+    return this.signature;
+  }
+}
+
+class Person {
+  private key: Key;
+
+  constructor(passedKey: Key) {
+    this.key = passedKey;
+  }
+
+  getKey(): number {
+    return this.key.getSignature();
+  }
+}
+
+abstract class House {
+  protected savedKey: Key;
+  protected door: boolean = false;
+  public tenants: Person[] = [];
+
+  constructor(savedKey: Key) {
+    this.savedKey = savedKey;
+  }
+
+  comeIn(person: Person): void {
+    if (this.door) {
+      this.tenants.push(person);
+      console.log('A person with the right key has come in');
     }
   }
 
-  class MyHouse {
-    private savedKey: number;
-    protected isDoorOpen: boolean;
-    protected isPersonAtHome: boolean;
-      
-    constructor(key: Key) {
-      this.savedKey = key.getSignature();
-      this.isDoorOpen = false;
-      this.isPersonAtHome = false;
-    }
-      
-    openDoor(insertedKey: number): void {
-      if (insertedKey === this.savedKey) {
-        this.isDoorOpen = true;
-        console.log("Key is " + insertedKey + ". The door is open");
-      }
-    }
+  public abstract openDoor(key: number): void;
+}
 
-    comeIn() {
-      if (this.isDoorOpen) {
-        this.isPersonAtHome = true;
-      }
-    }
+
+class MyHouse extends House {
+  protected isPersonAtHome: boolean = false;
+
+  constructor(savedKey: Key) {
+    super(savedKey);
   }
 
-  class Person {
-    private key: Key;
-
-    constructor(ownedKey: Key) {
-      this.key = ownedKey;
-    }
-
-    getKey(this: Person): number {
-      return key.getSignature();
+  openDoor(insertedKey: number): void {
+    if (insertedKey === this.savedKey.getSignature()) {
+      this.door = true;
+      console.log("Key is " + insertedKey + ". The door is open.");
+    } else {
+      console.log("Something went wrong. Please, check the key");
     }
   }
+}
 
-  const key = new Key();
-  const house = new MyHouse(key);
-  const person = new Person(key);
-  
-  house.openDoor(person.getKey());
-  // house.comeIn(person);
+const key = new Key();
+const house = new MyHouse(key);
+const person = new Person(key);
 
-export {};
+house.openDoor(person.getKey());
+house.comeIn(person);
